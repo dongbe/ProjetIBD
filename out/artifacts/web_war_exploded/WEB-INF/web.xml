@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+   version="2.5">
+<servlet>
+<servlet-name>ProgrammeServlet</servlet-name> 
+<servlet-class>servlets.ProgrammeServlet</servlet-class>
+</servlet>
+ <servlet>
+<servlet-name>NouvelleRepresentationServlet</servlet-name>
+<servlet-class>servlets.NouvelleRepresentationServlet</servlet-class>
+</servlet>
+    <servlet>
+        <servlet-name>SecurityCheck</servlet-name>
+        <servlet-class>servlets.SecurityCheck</servlet-class>
+    </servlet>
+
+<servlet-mapping>
+<servlet-name>ProgrammeServlet</servlet-name> 
+<url-pattern>/servlets/ProgrammeServlet</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>NouvelleRepresentationServlet</servlet-name>
+<url-pattern>/servlets/NouvelleRepresentationServlet</url-pattern>
+</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SecurityCheck</servlet-name>
+        <url-pattern>/servlets/SecurityCheck</url-pattern>
+    </servlet-mapping>
+
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SecurityCheck</web-resource-name>
+            <url-pattern>/admin/admin.html</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>test</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Authentification</realm-name>
+    </login-config>
+</web-app>
