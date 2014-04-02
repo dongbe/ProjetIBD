@@ -5,12 +5,24 @@ package servlets;
  * Copyright (c) 2007 Sara Bouchenak.
  */
 
+import exceptions.ExceptionConnexion;
+import exceptions.ExceptionRepresentation;
+import exceptions.ExceptionSpectacle;
+import exceptions.ExceptionUtilisateur;
+import modele.Representation;
+import modele.Utilisateur;
+import utils.Utilitaires;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * NouvelleRepresentation Servlet.
@@ -37,45 +49,79 @@ public class NouvelleRepresentationServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         String numS, dateS, heureS;
+        Utilisateur user = null;
+
         ServletOutputStream out = res.getOutputStream();
 
         res.setContentType("text/html");
 
-        out.println("<HEAD><TITLE> Ajouter une nouvelle representation </TITLE></HEAD>");
+        out.println("<HEAD><TITLE> Ajouter une nouvelle representation </TITLE><LINK href=\"/stylesheets/aind_delhi_style1.css\" rel=\"stylesheet\" type=\"text/css\">\n" +
+                "\t<LINK href=\"/stylesheets/aind_delhi_MainStyleS.css\" rel=\"stylesheet\" type=\"text/css\"></HEAD>");
         out.println("<BODY bgproperties=\"fixed\" background=\"/images/rideau.JPG\">");
-        out.println("<font color=\"#FFFFFF\"><h1> Ajouter une nouvelle repr&eacute;sentation </h1>");
+        out.println("<div class=frame0 >");
+        out.println("<h1> Ajouter une nouvelle repr&eacute;sentation </h1>");
 
-        numS = req.getParameter("numS");
-        dateS = req.getParameter("date");
-        heureS = req.getParameter("heure");
-        if (numS == null || dateS == null || heureS == null) {
-            out.println("<font color=\"#FFFFFF\">Veuillez saisir les informations relatives &agrave; la nouvelle repr&eacute;sentation :");
-            out.println("<P>");
-            out.print("<form action=\"");
-            out.print("NouvelleRepresentationServlet\" ");
-            out.println("method=POST>");
-            out.println("Num&eacute;ro de spectacle :");
-            out.println("<input type=text size=20 name=numS>");
-            out.println("<br>");
-            out.println("Date de la repr&eacute;sentation :");
-            out.println("<input type=text size=20 name=date>");
-            out.println("<br>");
-            out.println("Heure de d&eacute;but de la repr&eacute;sentation :");
-            out.println("<input type=text size=20 name=heure>");
-            out.println("<br>");
-            out.println("<input type=submit>");
-            out.println("</form>");
-        } else {
-            // TO DO
-            // Transformation des param�tres vers les types ad�quats.
-            // Ajout de la nouvelle repr�sentation.
-            // Puis construction dynamique d'une page web de r�ponse.
-            out.println("<p><i><font color=\"#FFFFFF\">A compl&eacute;ter</i></p>");
-            out.println("<p><i><font color=\"#FFFFFF\">...</i></p>");
+        try {
+            user = Utilitaires.Identification();
+            numS = req.getParameter("spectacles");
+            dateS = req.getParameter("date");
+            heureS = req.getParameter("heure");
+
+            if (numS == null || dateS == null || heureS == null) {
+                out.println("Veuillez saisir les informations relatives &agrave; la nouvelle repr&eacute;sentation :");
+                out.println("<P>");
+                out.print("<form action=\"");
+                out.print("NouvelleRepresentationServlet\" ");
+                out.println("method=POST>");
+                out.println("Num&eacute;ro de spectacle :");
+                out.println("<select name=\"spectacles\">");
+                try {
+
+                    if (user != null) {
+                        Utilitaires.AfficherSpectacles(user, out);
+                    }
+                } catch (ExceptionConnexion exceptionConnexion) {
+                    exceptionConnexion.printStackTrace();
+                } catch (ExceptionSpectacle throwables) {
+                    throwables.printStackTrace();
+                }
+
+                out.println("</select>");
+                out.println("<br>");
+                out.println("Date de la repr&eacute;sentation :");
+                out.println("<input type=text size=20 name=date>");
+                out.println("<br>");
+                out.println("Heure de d&eacute;but de la repr&eacute;sentation :");
+                out.println("<input type=text size=20 name=heure>");
+                out.println("<br>");
+                out.println("<input type=submit>");
+                out.println("</form>");
+            } else {
+                SimpleDateFormat ff=new SimpleDateFormat("dd/MM/yyyy");
+                java.util.Date date2;
+                try {
+                    date2 = ff.parse(dateS);
+                    Representation representation=new Representation(parseInt(numS),new java.sql.Date(date2.getTime()),heureS);
+                    Utilitaires.AjouterRepresentation(user, representation);
+                    out.println("Representation ajoutee avec succes");
+                } catch (ParseException e) {
+                   out.println(" Message " + e.getMessage());
+                } catch (ExceptionRepresentation e) {
+                    out.println(" Message " + e.getMessage());
+                }
+
+            }
+        } catch (ExceptionConnexion exceptionConnexion) {
+            out.println(" Message " + exceptionConnexion.getMessage());
+        } catch (ExceptionUtilisateur exceptionUtilisateur) {
+            out.println(" Message " + exceptionUtilisateur.getMessage());
         }
 
+
+
         out.println("<hr><p><font color=\"#FFFFFF\"><a href=\"/admin/admin.html\">Page d'administration</a></p>");
-        out.println("<hr><p><font color=\"#FFFFFF\"><a href=\"/index.jsp\">Page d'accueil</a></p>");
+        out.println("<hr><p><font color=\"#FFFFFF\"><a href=\"/index.html\">Page d'accueil</a></p>");
+        out.println("</div>");
         out.println("</BODY>");
         out.close();
 

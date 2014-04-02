@@ -14,8 +14,8 @@ create table LesZones (numZ number (4), nomC varchar2(20),
       constraint zones_c1 primary key (numZ), 
       constraint zones_c3 check (numZ > 0)         
 ) ; 
-create table LesPlaces (noPlace number (4), noRang number (4), numZ number (4), 
-      constraint places_c1 primary key (noPlace, noRang), 
+create table LesPlaces (noPlace number (4), noRang number (4), numZ number (4),
+      constraint places_c1 primary key (noPlace, noRang),
       constraint places_c2 foreign key (numZ) references LesZones (numZ),
       constraint places_c3 check (noRang > 0),   
       constraint places_c4 check (noPlace > 0)
@@ -24,7 +24,7 @@ create table LesSpectacles (numS number (4), nomS varchar2(40),
       constraint spec_c1 primary key (numS),   
       constraint spec_c2 check (numS > 0) 
 ) ; 
-create table LesRepresentations (numS number (4), dateRep date,
+create table LesRepresentations (numS number (4), dateRep date, heureRep varchar2(5),
       constraint rep_c1 primary key (numS, dateRep),
       constraint rep_c2 foreign key (numS) references LesSpectacles (numS) 
 ) ; 

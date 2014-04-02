@@ -2,12 +2,7 @@ package accesBD;
 
 import exceptions.ExceptionConnexion;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
-import java.util.Properties;
 
 public final class BDConnexion {
 
@@ -27,13 +22,13 @@ public final class BDConnexion {
         Connection conn = null;
         try {
 
-			//lecture des parametres de connexion dans connection.conf
+			/*lecture des parametres de connexion dans connection.conf
             Properties p = new Properties();
 			InputStream is = null;
 			is = new FileInputStream(utils.Constantes.Config);
-			p.load(is);
-            String url = p.getProperty("url");
-            String driver = p.getProperty("driver");
+			p.load(is);*/
+            String url = "jdbc:oracle:thin:@im2ag-oracle.e.ujf-grenoble.fr:1521:ufrima";//p.getProperty("url");
+            String driver ="oracle.jdbc.OracleDriver";// p.getProperty("driver");
 
             Class.forName(driver);
             // hopper@UFR, Oracle
@@ -43,10 +38,6 @@ public final class BDConnexion {
 
         } catch (ClassNotFoundException e) {
             throw new ExceptionConnexion("problème d'identification du pilote \n" + e.getMessage());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return conn;
     }

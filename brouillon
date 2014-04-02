@@ -1,0 +1,26 @@
+<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>test</web-resource-name>
+            <url-pattern>/admin/admin.html</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Authentification</realm-name>
+    </login-config
+
+
+
+    $.ajax({
+            url: '/',
+            type: 'POST', // ou GET
+            data: "id=1",      //Par exemple on envoie l'id
+            success: function (response) {
+                $cible.html(reponse);
+                // La cible préalablement enregistre dans la variable $cible
+            }
+        });

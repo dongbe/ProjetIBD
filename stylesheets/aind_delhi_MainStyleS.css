@@ -1,0 +1,30 @@
+body {font-family:  Trebuchet MS, tahoma, verdana, Arial, Helvetica, sans-serif ; font-size : 14px}
+
+#html, body {
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width:1010px;
+  height: 100%;
+  margin: auto; 
+}
+#middlecol { 
+	border: 2px solid #8B0000;
+	border-top: 6px solid #8B0000;
+	} 
+a:link{
+	color:#4682B4;
+	text-decoration : none;
+	}
+a:visited{
+	color: #191970	;
+	text-decoration : none;
+	}
+a:hover{
+	color: #191970	;
+	text-decoration : underline;
+	}
+.left{ text-align:left;}
+.right{ text-align:right;}
+.top{vertical-align:top;}

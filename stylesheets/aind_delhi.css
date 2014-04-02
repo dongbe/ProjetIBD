@@ -1,0 +1,96 @@
+body {font-family: Trebuchet MS, Arial, Helvetica, sans-serif ; font-size : 14px}
+
+.frame0{
+
+	background: #FAFAD2;
+
+	width: 1000px;
+
+	height: 980px;
+
+	padding: 5px;
+
+	position : absolute;
+
+	top: 0px;
+	
+	margin: auto;
+
+	}
+
+
+	
+.deco1{ font-weight: bold;}
+
+a.deco1:link, a.deco1:visited{
+	color:#FFFFF0;
+	text-decoration : none;
+	}
+	
+a.deco2:link, a.deco2:visited{
+	color:red;
+	text-decoration : none;
+	}
+
+a.deco1:hover{
+	color: orange;
+	}
+a.deco2:hover{
+	text-decoration : underline;
+	}
+	
+p { line-height:1.50em;}	
+h4 {margin: 0;}	
+	
+	
+.ex1 {
+	background-color: #32CD32;
+	height:30px;
+	width:126px;
+	align:center;
+	}	
+	
+.ex2 {
+	background-color: #fff;
+	height:30px;
+	align:center;
+	}
+.menu-sidebar { background-color: #32CD32; padding:6px;}
+.quick-sidebar { background-color: #4682B4; padding:0px;}	
+
+.green{ border-color: #32CD32; background-color: white;}
+
+
+#rightcol { 
+	border: 1px solid #4682B4;}
+#dottedcol { 
+	border: 2px dotted grey;
+	} 
+#noborders { 
+	border-color: white;
+	} 
+#voila { 
+	border: 1px solid #32CD32;
+	height: 80px;
+	} 
+#voila2 { 
+	border: 1px solid #4682B4;
+	height: 80px;
+	} 
+
+td.ex1:hover {background-color: #228B22;}
+h4.menu-sidebar:hover {background-color: #228B22;}
+.menu1 {position : absolute; margin:0px; padding: 0px;}
+.lien1, .lien2{ font-size:15px; border: 1px solid grey; height :25px; padding-left:2px; width:150px;text-align: center;} 
+.lien2{  background-color: white; } 
+
+
+IMG.displayed {
+    display: block;
+    margin-left: auto;
+    margin-right: auto ;
+	height : 80px ;
+	width :80px;
+}
+
+

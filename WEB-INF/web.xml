@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+   version="2.5">
+<display-name>Servlets</display-name>
+<description> Servlets </description>
+<servlet>
+<servlet-name>ProgrammeServlet</servlet-name> 
+<servlet-class>servlets.ProgrammeServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>NouvelleRepresentationServlet</servlet-name> 
+<servlet-class>servlets.NouvelleRepresentationServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>ConsulterRepresentationServlet</servlet-name> 
+<servlet-class>servlets.ConsulterRepresentationServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>ConsulterPlaceServlet</servlet-name> 
+<servlet-class>servlets.ConsulterPlaceServlet</servlet-class>
+</servlet>
+<servlet>
+<servlet-name>ReserverServlet</servlet-name> 
+<servlet-class>servlets.ReserverServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>ProgrammeServlet</servlet-name> 
+<url-pattern>/servlet/ProgrammeServlet</url-pattern> 
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>NouvelleRepresentationServlet</servlet-name> 
+<url-pattern>/servlet/NouvelleRepresentationServlet</url-pattern> 
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>ConsulterRepresentationServlet</servlet-name> 
+<url-pattern>/servlet/ConsulterRepresentationServlet</url-pattern> 
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>ConsulterPlaceServlet</servlet-name> 
+<url-pattern>/servlet/ConsulterPlaceServlet</url-pattern> 
+</servlet-mapping>
+<servlet-mapping>
+<servlet-name>ReserverServlet</servlet-name> 
+<url-pattern>/servlet/ReserverServlet</url-pattern> 
+</servlet-mapping>
+</web-app>

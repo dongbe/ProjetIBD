@@ -1,24 +1,17 @@
 package utils;
 
-import accesBD.BDCategories;
-import accesBD.BDConnexion;
-import accesBD.BDRepresentations;
-import exceptions.CategorieException;
+import accesBD.*;
 import exceptions.ExceptionConnexion;
+import exceptions.ExceptionRepresentation;
+import exceptions.ExceptionSpectacle;
 import exceptions.ExceptionUtilisateur;
-import exceptions.RepresentationsException;
-import modele.Categorie;
-import modele.Representations;
-import modele.Utilisateur;
+import modele.*;
 
 import javax.servlet.ServletOutputStream;
 import java.awt.*;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.util.Date;
-import java.util.Properties;
+import java.text.ParseException;
 import java.util.Vector;
 
 /**
@@ -31,8 +24,6 @@ public class Utilitaires {
     public Utilitaires() {
     }
 
-    public static ServletOutputStream out;
-
     /**
      * Affiche les categories du theatre avec pour chacune son prix
      *
@@ -42,9 +33,10 @@ public class Utilitaires {
      */
     public static void AfficherCategories(Utilisateur user, ServletOutputStream out) throws IOException {
         Vector<Categorie> res = new Vector<Categorie>();
-        try {
 
-            res = BDCategories.getCategorie(user);
+        try {
+            String nomC=nomZone(user,null);
+            res = BDCategories.getCategorie(user,nomC);
             if (res.isEmpty()) {
                 out.println(" Liste vide ");
             } else {
@@ -53,12 +45,11 @@ public class Utilitaires {
                             + res.elementAt(i).getPrix() + ")");
                 }
             }
-            out.println("===================");
-        } catch (CategorieException e) {
+        } catch (ExceptionSpectacle e) {
             out.println(" Erreur dans l'affichage des categories : "
                     + e.getMessage());
         } catch (ExceptionConnexion e) {
-            out.println(" Erreur dans l'affichage des categories : "
+            out.println(" Erreur de connexion : "
                     + e.getMessage());
         }
 
@@ -82,7 +73,7 @@ public class Utilitaires {
         try {
             BDCategories.addCategories(user, nouvo);
             out.println("Une nouvelle categorie inseree");
-        } catch (CategorieException e) {
+        } catch (ExceptionSpectacle e) {
             e.printStackTrace();
         } catch (ExceptionConnexion exceptionConnexion) {
             exceptionConnexion.printStackTrace();
@@ -102,20 +93,9 @@ public class Utilitaires {
         Utilisateur user = null;
         String login;
         String passwd;
-        //lecture des parametres de connexion dans connection.conf
-		Properties p = new Properties();
-		InputStream is = null;
-		is = new FileInputStream(utils.Constantes.Config);
-		p.load(is);
-		login = p.getProperty("user");
-		passwd = p.getProperty("mdp");
-		if (login == null || login.equals("MYUSERNAME")) {
-			UserNamePasswordDialog login_dialog = new UserNamePasswordDialog(
-					new Frame(""));
-			login_dialog.setVisible(true);
-			login = login_dialog.getUid();
-			passwd = login_dialog.getPwd();
-		}
+		login = "gbed";//p.getProperty("user");
+		passwd ="bd2013"; //p.getProperty("mdp");
+
 		/* test de la connexion */
         Connection conn = BDConnexion.getConnexion(login, passwd);
         if (conn != null) {
@@ -133,55 +113,172 @@ public class Utilitaires {
      * @throws exceptions.ExceptionUtilisateur
      * @throws exceptions.ExceptionConnexion
      */
-    public static void AfficherRepresentations() throws ExceptionConnexion, ExceptionUtilisateur {
-        Vector<Representations> res = new Vector<Representations>();
+    public static void AfficherRepresentations(Utilisateur user,ServletOutputStream out, String numS)
+            throws ExceptionConnexion, ExceptionUtilisateur{
+        Vector<Representation> res = new Vector<Representation>();
 
-        try {
-            Utilisateur user = Utilitaires.Identification();
-            if (user != null) {
-                res = BDRepresentations.getRepresentations(user);
+        try{
+
+            res = BDRepresentation.getRepresentations(user,numS);
                 if (res.isEmpty()) {
                     out.println("il n'y a plus de representations");
                 } else {
-
                     out.println("<TABLE BORDER=\"1\"><TR>");
                     out.println(" <TH> Numero </TH>");
                     out.println(" <TH> Numero spectacle </TH>");
                     out.println(" <TH> Date </TH>");
+                    out.println(" <TH> Heure</TH>");
                     out.println("</TR>");
                     for (int i = 0; i < res.size(); i++) {
                         out.println("<TR>");
                         out.println(" <TH>" + (i + 1) + "</TH>");
-                        out.println("<TD>" + res.elementAt(i).getNomSpec() + " </TD><TD> "
-                                + res.elementAt(i).getDateSpec() + "</TD>");
+                        out.println("<TD>" + res.elementAt(i).getNumRep() + " </TD><TD> "
+                                + res.elementAt(i).getDateRep() + "</TD>" +
+                                "<TD><a href=\"/servlet/ConsulterPlaceServlet?spectacle="+res.elementAt(i).getNumRep()+
+                                "&date="+res.elementAt(i).getDateRep()+"&heure="+res.elementAt(i).getHeurRep()+
+                                "\">"+res.elementAt(i).getHeurRep()+"</a></TD>");
                         out.println("</TR>");
                     }
                     out.println("</TABLE>");
                 }
-            }else {
-                out.println("<font color=\"#FFFFFF\"><h1> Aucun programme disponible </h1>");
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (RepresentationsException e) {
+        } catch (ExceptionRepresentation e) {
             e.printStackTrace();
         }
     }
-    public static void AjouterRepresentations(int n,Date date) throws ExceptionConnexion, ExceptionUtilisateur {
-        String gy;
-        Date dateSpec = null;
-        int nomSpec = n;
-        dateSpec = date;
-        Representations nouvo = new Representations(nomSpec, dateSpec);
-        try {
-            BDRepresentations.addRepresentations(user, nouvo);
-            out.println("Une nouvelle categorie inseree");
-        } catch (CategorieException e) {
-            e.printStackTrace();
-        } catch (ExceptionConnexion exceptionConnexion) {
-            exceptionConnexion.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public static void AjouterRepresentation(Utilisateur user, Representation r)
+            throws ExceptionRepresentation, ExceptionConnexion {
+
+     BDRepresentation.addRepresentations(user, r);
+
+     }
+
+    /**
+     * retourne la liste des spectacles dans un combobox
+     * @param user
+     * @param out
+     * @throws ExceptionSpectacle
+     * @throws ExceptionConnexion
+     */
+    public static void AfficherSpectacles(Utilisateur user, ServletOutputStream out) throws ExceptionSpectacle, ExceptionConnexion {
+        Vector<Spectacle> res = new Vector<Spectacle>();
+
+        res = BDSpectacle.getSpectacle(user);
+        if(res.isEmpty()){
+
         }
-}
+        else{
+                try {
+                    out.println("<option value=\" \" selected=\"selected\"></option>");
+                    for(int i=0; i<res.size(); i++){
+                    out.println("<option value="+res.elementAt(i).getNumS()+">"+res.elementAt(i).getNomSpec()+"</option>");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    /**
+     * Retourne la liste de spectacles
+     * @param user
+     * @param out
+     * @throws ExceptionSpectacle
+     * @throws ExceptionConnexion
+     * @throws IOException
+     */
+    public static void AfficherSpectacle(Utilisateur user, ServletOutputStream out) throws ExceptionSpectacle, ExceptionConnexion, IOException {
+        Vector<Spectacle> res = new Vector<Spectacle>();
+
+        res = BDSpectacle.getSpectacle(user);
+        if (res.isEmpty()) {
+            out.println("il n'y a plus de representations");
+        } else {
+            out.println("<TABLE BORDER=\"1\"><TR>");
+            out.println(" <TH> Numero </TH>");
+            out.println(" <TH> Numero spectacle </TH>");
+            out.println(" <TH> Spectacle </TH>");
+            out.println(" <TH> Consulter diffusions</TH>");
+            out.println("</TR>");
+            for (int i = 0; i < res.size(); i++) {
+                out.println("<TR>");
+                out.println(" <TH>" + (i + 1) + "</TH>");
+                out.println("<TD>" + res.elementAt(i).getNumS() + " </TD><TD> "
+                        + res.elementAt(i).getNomSpec() + "</TD>" +
+                        "<TD><a href=\"/servlet/ConsulterRepresentationServlet?numS="+res.elementAt(i).getNumS()+"\">les dates</a></TD>");
+                out.println("</TR>");
+
+            }
+            out.println("</TABLE>");
+        }
+    }
+
+    /**
+     *
+     * @param user
+     * @param out
+     * @throws ParseException
+     * @throws ExceptionConnexion
+     * @throws IOException
+     */
+    public static void AfficherPlace(Utilisateur user, ServletOutputStream out, String numS, String date, String heureS) throws ParseException, ExceptionConnexion, IOException {
+        Vector<Place> res = new Vector<Place>();
+        res= BDPlace.getPlace(user,null,null,null);
+        if (res.isEmpty()) {
+            out.println("il n'y a plus de place");
+        } else {
+            int val;
+            out.println("<TABLE BORDER=\"1\">");
+            for (int i = 0; i < res.size(); i++) {
+                out.println("<TR>");
+                out.println(" <TH>" + res.elementAt(i).getNorang() + "</TH>");
+                out.println("<TD>"+zoneColor(res.elementAt(i).getNumz())+res.elementAt(i).getNoplace() + "</font></TD>");
+                val= res.elementAt(i).getNorang();
+                while(i+1<res.size() && res.elementAt(i+1).getNorang()==val){
+                    out.println("<TD><a href=\"/servlet/ReserverServlet?num="+numS+
+                            "&date="+date+
+                            "&zone="+res.elementAt(i).getNumz()+
+                            "&place="+res.elementAt(i+1).getNoplace()+
+                            "&rang="+val+
+                            "&heure="+heureS+"\"> "+ zoneColor(res.elementAt(i).getNumz())+res.elementAt(i+1).getNoplace() +"</font></a></TD>");
+                    i++;
+                }
+                out.println("</TR>");
+            }
+            out.println("</TABLE>");
+        }
+    }
+    public static String zoneColor(int z){
+        String colorFont=null;
+        switch (z){
+            case 1:
+               colorFont="<font color=\"10B215\">";break;
+            case 2:
+                colorFont="<font color=\"1048B2\">";break;
+            case 3:
+                colorFont="<font color=\"B21D10\">";break;
+            case 4:
+                colorFont="<font color=\"F7EF15\">";break;
+            case 5:
+                colorFont="<font color=\"F79D15\">";break;
+            case 6:
+                colorFont="<font color=\"F715E4\">";break;
+        }
+        return colorFont;
+    }
+    public static String nomZone(Utilisateur user, String zone) throws ExceptionConnexion {
+        Vector<Zone> rs = new Vector<Zone>();
+        rs=BDZone.getZone(user,zone);
+        String nomC=rs.elementAt(0).getNomZone();
+        return nomC;
+    }
+    public static String prixZone(Utilisateur user, String zone) throws ExceptionConnexion, ExceptionSpectacle {
+        Vector<Categorie> rs = new Vector<Categorie>();
+        rs=BDCategories.getCategorie(user,zone);
+        float prix=rs.elementAt(0).getPrix();
+        return String.valueOf(prix);
+    }
 }

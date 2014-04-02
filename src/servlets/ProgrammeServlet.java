@@ -5,7 +5,9 @@
  */
 package servlets;
 
+import affichage.StylePage;
 import exceptions.ExceptionConnexion;
+import exceptions.ExceptionSpectacle;
 import exceptions.ExceptionUtilisateur;
 import modele.Utilisateur;
 import utils.Utilitaires;
@@ -45,35 +47,21 @@ public class ProgrammeServlet extends HttpServlet {
 
         res.setContentType("text/html");
 
-        out.println("<HEAD><TITLE> Programme de la saison </TITLE></HEAD>");
-        out.println("<BODY bgproperties=\"fixed\" background=\"/images/rideau.JPG\">");
-        out.println("<font color=\"#FFFFFF\"><h1> Programme de la saison </h1>");
+        StylePage.Header(out);
 
         try {
-            Utilitaires.AfficherRepresentations();
-        } catch (ExceptionConnexion exceptionConnexion) {
-            exceptionConnexion.printStackTrace();
-        } catch (ExceptionUtilisateur exceptionUtilisateur) {
-            exceptionUtilisateur.printStackTrace();
-        }
-       /* try {
             Utilisateur user = Utilitaires.Identification();
             if (user != null) {
-                Utilitaires.AfficherRepresentations(user,out);
+                Utilitaires.AfficherSpectacle(user, out);
             }
         } catch (ExceptionConnexion exceptionConnexion) {
             exceptionConnexion.printStackTrace();
         } catch (ExceptionUtilisateur exceptionUtilisateur) {
             exceptionUtilisateur.printStackTrace();
-        }*/
-        // TO DO
-        // R�cup�ration de la liste de tous les spectacles de la saison.
-        // Puis construction dynamique d'une page web d�crivant ces spectacles.
-        out.println("<p><i><font color=\"#FFFFFF\">A compl&eacute;ter</i></p>");
-        out.println("<p><i><font color=\"#FFFFFF\">...</i></p>");
-        out.println("<hr><p><font color=\"#FFFFFF\"><a href=\"/index.jsp\">Accueil</a></p>");
-        out.println("</BODY>");
-        out.close();
+        } catch (ExceptionSpectacle throwables) {
+            throwables.printStackTrace();
+        }
+       StylePage.Footer(out);
 
     }
 
